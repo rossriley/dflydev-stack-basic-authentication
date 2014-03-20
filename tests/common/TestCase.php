@@ -2,8 +2,7 @@
 
 namespace common;
 
-use Dflydev\Hawk\Credentials\Credentials;
-use Dflydev\Stack\BasicAuthentication;
+use Stack\BasicAuthentication;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
@@ -15,7 +14,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $this->credentials = ['username1234', 'password1234', 'token1234'];
     }
 
-    protected function basicify(HttpKernelInterface $app, array $config = [])
+    protected function basicify(HttpKernelInterface $app, $config = [])
     {
         $config = array_merge([
             'authenticator' => function ($username = null, $password = null) {
