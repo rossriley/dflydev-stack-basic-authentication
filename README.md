@@ -5,10 +5,17 @@ A [Stack][0] middleware to enable [HTTP Basic Authentication][1] following the
 [STACK-2 Authentication][2] conventions.
 
 
+Fork Information
+==========================================
+
+Package forked from the original work here: https://packagist.org/packages/dflydev/stack-basic-authentication
+
+This is an attempt to make it framework agnostic, since the original depends on Silex / Pimple
+
 Installation
 ------------
 
-Through [Composer][3] as [dflydev/stack-basic-authentication][4].
+Through [Composer][3] as [rossriley/stack-basic-authentication][4].
 
 
 Usage

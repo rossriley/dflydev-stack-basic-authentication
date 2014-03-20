@@ -1,5 +1,5 @@
 {
-    "name": "dflydev/stack-basic-authentication",
+    "name": "rossriley/stack-basic-authentication",
     "description": "HTTP Basic Authentication Stack middleware",
     "keywords": ["stack", "stack-2", "authentication"],
     "license": "MIT",
@@ -13,11 +13,17 @@
             "name": "Beau Simensen",
             "email": "beau@dflydev.com",
             "homepage": "http://beausimensen.com"
+        },
+        {
+            "name": "Ross Riley",
+            "email": "riley.ross@gmail.com",
+            "homepage": "http://rossriley.co.uk"
         }
     ],
     "autoload": {
-        "psr-0": {
-            "Dflydev\\Stack": "src"
+        "psr-4": {
+            "Stack\\Auth\\": "src",
+            "Stack\\Auth\\Tests\\": "tests"
         }
     },
     "require": {
@@ -28,12 +34,7 @@
         "symfony/http-kernel": "~2.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.21",
-        "silex/silex": "1.1.*@dev",
-        "stack/builder": "~1.0@dev",
-        "stack/callable-http-kernel": "~1.0@dev",
-        "stack/inline": "~1.0@dev",
-        "symfony/browser-kit": "~2.1"
+        "phpunit/phpunit": "~3.7"
     },
     "extra": {
         "branch-alias": {

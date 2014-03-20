@@ -1,12 +1,7 @@
 <?php
 
-namespace Dflydev\Stack;
+namespace Stack\Auth;
 
-use Dflydev\Hawk\Crypto\Crypto;
-use Dflydev\Hawk\Header\HeaderFactory;
-use Dflydev\Hawk\Server\ServerBuilder;
-use Dflydev\Hawk\Server\UnauthorizedException;
-use Pimple;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -19,7 +14,6 @@ class BasicAuthentication implements HttpKernelInterface
     public function __construct(HttpKernelInterface $app, array $options = array())
     {
         $this->app = $app;
-        $this->container = $this->setupContainer($options);
     }
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
@@ -90,28 +84,5 @@ class BasicAuthentication implements HttpKernelInterface
             ->handle($request, $type, $catch);
     }
 
-    private function setupContainer(array $options = array())
-    {
-        if (!isset($options['authenticator'])) {
-            throw new \InvalidArgumentException(
-                "The 'authenticator' service must be set"
-            );
-        }
 
-        $c = new Pimple([
-            'firewall' => [],
-        ]);
-
-        foreach ($options as $name => $value) {
-            if (in_array($name, ['authenticator'])) {
-                $c[$name] = $c->protect($value);
-
-                continue;
-            }
-
-            $c[$name] = $value;
-        }
-
-        return $c;
-    }
 }
