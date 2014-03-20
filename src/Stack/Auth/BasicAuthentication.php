@@ -5,15 +5,27 @@ namespace Stack\Auth;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Dflydev\Stack\Firewall;
+use Dflydev\Stack\WwwAuthenticateStackChallenge;
 
 class BasicAuthentication implements HttpKernelInterface
 {
     private $app;
-    private $container;
 
     public function __construct(HttpKernelInterface $app, array $options = array())
     {
         $this->app = $app;
+
+        if (!isset($options['authenticator'])) {
+            throw new \InvalidArgumentException(
+                "The 'authenticator' service must be set"
+            );
+        }
+
+        foreach ($options as $name => $value) {
+            $this->$name = $value;
+        }
+
     }
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
@@ -24,8 +36,8 @@ class BasicAuthentication implements HttpKernelInterface
         // response object.
         $challenge = function (Response $response) {
             $parts = ['Basic'];
-            if (isset($this->container['realm'])) {
-                $parts[] = 'realm="'.$this->container['realm'].'"';
+            if (isset($this->realm)) {
+                $parts[] = 'realm="'.$this->realm.'"';
             }
 
             $response->headers->set('WWW-Authenticate', implode(' ', $parts));
@@ -54,7 +66,7 @@ class BasicAuthentication implements HttpKernelInterface
                 return call_user_func($challenge, (new Response)->setStatusCode(401));
             }
 
-            $token = $this->container['authenticator']($username, $request->headers->get('PHP_AUTH_PW'));
+            $token = $this->authenticator($username, $request->headers->get('PHP_AUTH_PW'));
 
             if (null === $token) {
                 if ($anonymous) {
@@ -79,7 +91,7 @@ class BasicAuthentication implements HttpKernelInterface
         return (new Firewall($this->app, [
                 'challenge' => $challenge,
                 'authenticate' => $authenticate,
-                'firewall' => $this->container['firewall'],
+                'firewall' => $this->firewall,
             ]))
             ->handle($request, $type, $catch);
     }

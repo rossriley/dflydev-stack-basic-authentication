@@ -4,11 +4,6 @@
          colors="true"
          bootstrap="tests/bootstrap.php"
 >
-    <testsuites>
-        <testsuite name="functional">
-            <directory>./tests/functional/</directory>
-        </testsuite>
-    </testsuites>
 
     <filter>
         <whitelist>
