@@ -66,7 +66,8 @@ class BasicAuthentication implements HttpKernelInterface
                 return call_user_func($challenge, (new Response)->setStatusCode(401));
             }
 
-            $token = $this->authenticator($username, $request->headers->get('PHP_AUTH_PW'));
+            $token = $this->authenticator->__invoke($username, $request->headers->get('PHP_AUTH_PW'));
+
 
             if (null === $token) {
                 if ($anonymous) {
