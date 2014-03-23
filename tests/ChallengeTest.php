@@ -1,49 +1,65 @@
 <?php
 namespace Stack\Auth\Tests;
 
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Stack\Auth\BasicAuthentication;
 
 
 
-class ChallengeTest extends \PHPUnit_Framework_TestCase {
+class ChallengeTest extends \PHPUnit_Framework_TestCase
+{
 
 
-    public function testChallenge() {
+    public function testChallenge()
+    {
         $response = $this->doRequest(Request::create("/protected","GET"));
         $this->assertNotEmpty($response->headers->get("www-authenticate"));
-        $this->assertEquals($response->getStatusCode(), 401);
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testNoChallenge() {
+    public function testNoChallenge()
+    {
         $response = $this->doRequest(Request::create("/","GET"));
         $this->assertEmpty($response->headers->get("www-authenticate"));
-        $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testAuthentication() {
-        $request = Request::create('GET','/protected',[],[],[], ['PHP_AUTH_USER' => 'test', 'PHP_AUTH_PW' => 'password']);
+
+    public function testAuthentication()
+    {
+        $request = Request::create('/protected','GET',[],[],[], ['PHP_AUTH_USER' => 'test', 'PHP_AUTH_PW' => 'password']);
         $response = $this->doRequest($request);
-        $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals("protected", $response->getContent());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
 
-    protected function doRequest($request) {
-        $app = new TestApp;
+    public function testBadAuthentication()
+    {
+        $request = Request::create('/protected','GET',[],[],[], ['PHP_AUTH_USER' => 'baduser', 'PHP_AUTH_PW' => 'wrongpassword']);
+        $response = $this->doRequest($request);
+        $this->assertEquals(401, $response->getStatusCode());
+    }
+
+
+
+    protected function doRequest($request)
+    {
+        $app = new Fixtures\TestApp;
         $app = new BasicAuthentication($app, $this->firewall());
         return $app->handle($request);
     }
 
-    protected function auth($username, $password) {
-        if($username == "test" && $password =="password") return true;
-        return false;
-    }
 
-    protected function firewall() {
+    protected function firewall()
+    {
+        $auth = function($username, $password) {
+            if($username == "test" && $password =="password") return "securetoken";
+        };
+
         return [
             'firewall' => [['path' => '/protected']],
-            'authenticator' => function($username, $password) { return $this->auth($username, $password); },
+            'authenticator' => $auth,
             'realm' => 'Requires authentication',
         ];
     }
