@@ -40,7 +40,27 @@ class ChallengeTest extends \PHPUnit_Framework_TestCase
         $response = $this->doRequest($request);
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertNotEquals("protected", $response->getContent());
-   }
+    }
+
+    public function testNoAuthenticatorFails()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+        $firewall = $this->firewall();
+        $firewall["authenticator"] = null;
+        $app = new Fixtures\TestApp;
+        $app = new BasicAuthentication($app, $firewall);
+        $response = $app->handle($request);
+    }
+
+    public function testAnonymous()
+    {
+        $firewall = $this->firewall();
+        $firewall["firewall"][] = ["path"=>"/anon", "anonymous"=>true];
+        $app = new Fixtures\TestApp;
+        $app = new BasicAuthentication($app, $firewall);
+        $response = $app->handle(Request::create("/anon","GET"));
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 
 
 

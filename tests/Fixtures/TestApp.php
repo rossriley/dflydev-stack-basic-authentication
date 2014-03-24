@@ -12,6 +12,7 @@ class TestApp implements HttpKernelInterface {
     {
         if($request->getRequestUri() == "/") return new Response("public");
         if($request->getRequestUri() == "/protected") return new Response("protected");
+        if($request->getRequestUri() == "/anon") return new Response("anonymous");
         return new Response("invalid");
     }
 
