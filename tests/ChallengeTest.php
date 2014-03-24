@@ -39,7 +39,8 @@ class ChallengeTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/protected','GET',[],[],[], ['PHP_AUTH_USER' => 'baduser', 'PHP_AUTH_PW' => 'wrongpassword']);
         $response = $this->doRequest($request);
         $this->assertEquals(401, $response->getStatusCode());
-    }
+        $this->assertNotEquals("protected", $response->getContent());
+   }
 
 
 
